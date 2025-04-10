@@ -16,6 +16,7 @@ class Post extends Model
         'image',
         'user_id',
         'category_id',
+        
     ];
     public function user()
     {
@@ -25,8 +26,9 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function getRouteKeyName()
+  
+    public function actions()
     {
-        return 'title';
+        return $this->hasMany(ActionPost::class);
     }
- }
+}
