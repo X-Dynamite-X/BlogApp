@@ -40,6 +40,12 @@ class PostController extends Controller
     public function show(Post $post)
     {
         //
+        if (auth()->check() && !auth()->user()->views->contains('post_id', $post->id)) {
+
+            $post->views()->updateOrCreate(['user_id' => auth()->id()])->incrementView();
+        }
+
+        return view('post.show', compact('post'));
     }
 
     /**
@@ -66,11 +72,19 @@ class PostController extends Controller
         //
     }
 
-    public function like(Post $post)
+    public function like(Post $post , Request $request)
     {
         $userId = auth()->id();
+        $isActive = $request->input('isActive');
+        if($isActive == 'true'){
+            ActionPost::where('post_id', $post->id)
+            ->where('user_id', $userId)
+            ->where('action', 'like')
+            ->delete();
+            return response()->json(['message' => 'Post unliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+        }
 
-        // حذف التفاعل السابق إن وُجد (dislike فقط)
+
         ActionPost::where('post_id', $post->id)
             ->where('user_id', $userId)
             ->where('action', 'dislike')
@@ -88,13 +102,21 @@ class PostController extends Controller
 
         );
 
-        return response()->json(['message' => 'Post liked successfully.']);
+        return response()->json(['message' => 'Post liked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
     }
 
 
-    public function dislike(Post $post)
+    public function dislike(Post $post , Request $request)
     {
         $userId = auth()->id();
+        $isActive = $request->input('isActive');
+        if($isActive == 'true'){
+            ActionPost::where('post_id', $post->id)
+            ->where('user_id', $userId)
+            ->where('action', 'dislike')
+            ->delete();
+            return response()->json(['message' => 'Post undisliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+        }
 
         ActionPost::where('post_id', $post->id)
             ->where('user_id', $userId)
@@ -111,7 +133,7 @@ class PostController extends Controller
 
         );
 
-        return response()->json(['message' => 'Post disliked successfully.']);
+        return response()->json(['message' => 'Post disliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
     }
 
 
@@ -130,5 +152,3 @@ class PostController extends Controller
         return view('Home', compact('posts'));
     }
 }
-
-

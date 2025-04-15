@@ -14,6 +14,6 @@ Route::prefix("/")->group(function () {
 Route::prefix('/post')->group(function () {
     Route::post('{post}/like', [PostController::class, 'like'])->name('post.like');
     Route::post('{post}/dislike', [PostController::class, 'dislike'])->name('post.dislike');
-    Route::post('{post}/view', [PostController::class, 'incrementView'])->name('post.view');
+    Route::get('{post}', [PostController::class, 'show'])->name('post.show');
 
 });

@@ -50,9 +50,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
-  
+
     public function postActions()
     {
         return $this->hasMany(ActionPost::class);
+    }
+    public function views()
+    {
+        return $this->hasMany(View::class);
     }
 }

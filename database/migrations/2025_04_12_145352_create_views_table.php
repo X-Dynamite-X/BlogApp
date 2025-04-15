@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('views', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('image')->nullable();
-            $table->string('title');
-            $table->text('content');
-            // $table->integer("view")->default(0);
+            $table->unique(['post_id', 'user_id']);
+            $table->integer("view")->default(0);
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('views');
     }
 };
