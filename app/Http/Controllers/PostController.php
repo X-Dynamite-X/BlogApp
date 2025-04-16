@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{Post, ActionPost,Category};
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Can;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -39,10 +39,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
-        if (auth()->check() && !auth()->user()->views->contains('post_id', $post->id)) {
-
-            $post->views()->updateOrCreate(['user_id' => auth()->id()])->incrementView();
+        if (Auth::check() && !Auth::user()->views->contains('post_id', $post->id)) {
+            $post->views()->updateOrCreate(['user_id' => Auth::id()])->incrementView();
         }
 
         return view('post.show', compact('post'));
@@ -74,7 +72,8 @@ class PostController extends Controller
 
     public function like(Post $post , Request $request)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
+
         $isActive = $request->input('isActive');
         if($isActive == 'true'){
             ActionPost::where('post_id', $post->id)
@@ -92,7 +91,6 @@ class PostController extends Controller
 
 
 
-        // تحديث أو إنشاء "like" بدون حذف المشاهدات
         ActionPost::updateOrCreate(
             [
                 'post_id' => $post->id,
@@ -108,7 +106,7 @@ class PostController extends Controller
 
     public function dislike(Post $post , Request $request)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
         $isActive = $request->input('isActive');
         if($isActive == 'true'){
             ActionPost::where('post_id', $post->id)
@@ -123,7 +121,6 @@ class PostController extends Controller
             ->where('action', 'like')
             ->delete();
 
-        // إنشاء أو تحديث dislike بدون التأثير على view
         ActionPost::updateOrCreate(
             [
                 'post_id' => $post->id,
