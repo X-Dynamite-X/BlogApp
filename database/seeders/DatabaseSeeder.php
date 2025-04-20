@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'dynamite@gmail.com',
             'password' => bcrypt('123'),
         ]);
+        User::factory(count: 10)->create();
         $this->call([
             CategorySeeder::class,
          ]);

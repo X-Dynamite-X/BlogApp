@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Post, ActionPost,Category};
+use App\Models\{Post, ActionPost, Category};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,9 +11,16 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::paginate(9);
+
+        if ($request->ajax()) {
+
+            $postsView = view('post.getPageValue', compact('posts'))->render();
+            $pagination = $posts->links()->render();
+            return response()->json(['posts' => $postsView, 'pagination' => $pagination]);
+        }
 
         return view('Home', compact('posts'));
     }
@@ -39,6 +46,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        
         if (Auth::check() && !Auth::user()->views->contains('post_id', $post->id)) {
             $post->views()->updateOrCreate(['user_id' => Auth::id()])->incrementView();
         }
@@ -70,17 +78,17 @@ class PostController extends Controller
         //
     }
 
-    public function like(Post $post , Request $request)
+    public function like(Post $post, Request $request)
     {
         $userId = Auth::id();
 
         $isActive = $request->input('isActive');
-        if($isActive == 'true'){
+        if ($isActive == 'true') {
             ActionPost::where('post_id', $post->id)
-            ->where('user_id', $userId)
-            ->where('action', 'like')
-            ->delete();
-            return response()->json(['message' => 'Post unliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+                ->where('user_id', $userId)
+                ->where('action', 'like')
+                ->delete();
+            return response()->json(['message' => 'Post unliked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
         }
 
 
@@ -100,20 +108,20 @@ class PostController extends Controller
 
         );
 
-        return response()->json(['message' => 'Post liked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+        return response()->json(['message' => 'Post liked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
     }
 
 
-    public function dislike(Post $post , Request $request)
+    public function dislike(Post $post, Request $request)
     {
         $userId = Auth::id();
         $isActive = $request->input('isActive');
-        if($isActive == 'true'){
+        if ($isActive == 'true') {
             ActionPost::where('post_id', $post->id)
-            ->where('user_id', $userId)
-            ->where('action', 'dislike')
-            ->delete();
-            return response()->json(['message' => 'Post undisliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+                ->where('user_id', $userId)
+                ->where('action', 'dislike')
+                ->delete();
+            return response()->json(['message' => 'Post undisliked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
         }
 
         ActionPost::where('post_id', $post->id)
@@ -129,23 +137,24 @@ class PostController extends Controller
             ],
 
         );
-
-        return response()->json(['message' => 'Post disliked successfully.', "likes"=>$post->actions->where('action', 'like')->count() ,  "dislikes"=>$post->actions->where('action', 'dislike')->count()]);
+        return response()->json(['message' => 'Post disliked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
     }
-
-
     public function incrementView(Post $post)
     {
         $post->increment('view');
         $post->save();
-
-        return response()->json(['message' => 'View incremented successfully.',"post"=>$post]);
+        return response()->json(['message' => 'View incremented successfully.', "post" => $post]);
     }
-
-    public function postCatygory($name)
+    public function postCatygory(Category $category ,Request $request )
     {
-        $category = Category::where('name', $name)->firstOrFail();
-        $posts = Post::where('category_id', $category->id)->paginate(9);
+        // $category = Category::where('name', $category->name)->firstOrFail();
+        // dd($category);
+        $posts = $category->posts()->paginate(9);
+        if ($request->ajax()) {
+            $postsView = view('post.getPageValue', compact('posts'))->render();
+            $pagination = $posts->links()->render();
+            return response()->json(['posts' => $postsView, 'pagination' => $pagination]);
+        }
         return view('Home', compact('posts'));
     }
 }

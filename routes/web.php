@@ -6,3 +6,4 @@ use App\Http\Controllers\PostController;
 // Route::get('/', [PostController::class, 'index'])->name("home");
 require __DIR__ . '/auth.php';
 require __DIR__ . '/posts.php';
+require __DIR__ . '/profile.php';

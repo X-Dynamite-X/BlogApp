@@ -20,8 +20,8 @@ class PostFactory extends Factory
             //
             'title' => $this->faker->sentence(),
             'content' => $this->faker->paragraph(10),
-            // 'image' => 'posts/' . $this->faker->image('public/storage/posts', 640, 480, null, false),
-            'user_id' => 1,
+            'image' => "https://picsum.photos/400/300?random=" . $this->faker->numberBetween(1, 800),
+             'user_id' => $this->faker->numberBetween(1, 10),
             'category_id' => $this->faker->numberBetween(1, 3),
         ];
     }

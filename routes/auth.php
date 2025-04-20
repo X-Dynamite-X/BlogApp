@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\{AuthController, ProfileController};
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -18,7 +18,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])
         ->name('password.update');
 });
+Route::middleware('auth')->group(
+    function () {
 
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/auth/check', [AuthController::class, 'check'])->name('auth.check');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::get('/auth/check', [AuthController::class, 'check'])->name('auth.check');
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    }
+);
