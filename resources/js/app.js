@@ -11,3 +11,4 @@ import "./auth/login";
 import "./auth/register";
 import "./posts/actionPost";
 import "./posts/pageination";
+import "./posts/requstApi";

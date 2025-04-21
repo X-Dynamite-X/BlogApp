@@ -10,8 +10,8 @@
             <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent">
                 <div class="flex items-end space-x-6">
                     <div class="relative group">
-                        <img 
-                            src="{{ auth()->user()->image }}" 
+                        <img
+                            src="{{ auth()->user()->image }}"
                             alt="Profile picture"
                             class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 object-cover shadow-lg"
                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF'"
@@ -89,14 +89,6 @@
                 <p class="text-gray-600 dark:text-gray-400 mt-2">
                     Manage and view your published articles
                 </p>
-            </div>
-            <!-- Filter/Sort Options -->
-            <div class="flex items-center space-x-2">
-                <select class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="popular">Most Popular</option>
-                </select>
             </div>
         </div>
     </div>

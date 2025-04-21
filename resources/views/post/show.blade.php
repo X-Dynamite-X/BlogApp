@@ -6,6 +6,28 @@
     <article class="max-w-4xl mx-auto bg-[#FDFDFC] dark:bg-[#202020] rounded-2xl shadow-lg overflow-hidden">
         <!-- Header Section -->
         <div class="relative h-[60vh] overflow-hidden">
+            <!-- Add Edit Button - Only visible to post owner -->
+            @if(auth()->check() && auth()->id() === $post->user_id)
+            <div class="absolute top-4 right-4 z-10">
+                <a href="{{ route('post.edit', $post) }}"
+                   class="inline-flex items-center px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm
+                          rounded-lg shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300
+                          text-gray-700 dark:text-gray-200 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5 mr-2"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Post
+                </a>
+            </div>
+            @endif
+
             <img src="https://picsum.photos/1200/800?random={{ $post->id }}"
                  alt="{{ $post->title }}"
                  class="w-full h-full object-cover">
@@ -29,6 +51,10 @@
                             <span>{{ $post->created_at->format('M d, Y') }}</span>
                             <span class="mx-2">•</span>
                             <span>{{ ceil(str_word_count($post->content) / 200) }} min read</span>
+                            @if($post->updated_at != $post->created_at)
+                            <span class="mx-2">•</span>
+                            <span>Edited {{ $post->updated_at->diffForHumans() }}</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -162,6 +188,7 @@
     </div>
 </div>
 @endsection
+
 
 
 

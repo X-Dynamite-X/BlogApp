@@ -30,7 +30,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('post.create', compact('categories'));
     }
 
     /**
@@ -46,11 +47,10 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        
+        $post = Post::findOrFail($post->id);
         if (Auth::check() && !Auth::user()->views->contains('post_id', $post->id)) {
             $post->views()->updateOrCreate(['user_id' => Auth::id()])->incrementView();
         }
-
         return view('post.show', compact('post'));
     }
 
@@ -59,7 +59,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $post = Post::findOrFail($post->id);
+        $categories = Category::all();
+        return view('post.edit', compact(['post', 'categories']));
     }
 
     /**
@@ -67,21 +69,23 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $post = Post::findOrFail($post->id);
+        $post->update($request->all());
+        $post->save();
+        return redirect()->route('post.show', $post->title);
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Post $post)
     {
-        //
+        $post = Post::findOrFail($post->id);
+        $post->delete();
+        return response()->json(['message' => 'Post deleted successfully.', 'redirect' => route('home')]);
     }
-
     public function like(Post $post, Request $request)
     {
         $userId = Auth::id();
-
         $isActive = $request->input('isActive');
         if ($isActive == 'true') {
             ActionPost::where('post_id', $post->id)
@@ -90,28 +94,19 @@ class PostController extends Controller
                 ->delete();
             return response()->json(['message' => 'Post unliked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
         }
-
-
         ActionPost::where('post_id', $post->id)
             ->where('user_id', $userId)
             ->where('action', 'dislike')
             ->delete();
-
-
-
         ActionPost::updateOrCreate(
             [
                 'post_id' => $post->id,
                 'user_id' => $userId,
                 'action' => 'like',
             ],
-
         );
-
         return response()->json(['message' => 'Post liked successfully.', "likes" => $post->actions->where('action', 'like')->count(),  "dislikes" => $post->actions->where('action', 'dislike')->count()]);
     }
-
-
     public function dislike(Post $post, Request $request)
     {
         $userId = Auth::id();
