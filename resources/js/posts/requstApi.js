@@ -1,5 +1,6 @@
 import $ from "jquery";
 
+
 const handleDeletePost = function (url) {
     $.ajax({
         url: url,
@@ -35,7 +36,7 @@ const handleupdatePost = function (url) {
         },
     })
 }
- 
+
 
 
 $(document).ready(function () {
@@ -55,5 +56,23 @@ $(document).ready(function () {
         console.log(url);
         handleupdatePost(url);
     });
-
+    $(document).on("input", "#content", function () {
+        const contentPreview = $("#content-preview");
+        contentPreview.text($(this).val());
+    });
+    $(document).on("input", "#image-upload", function () {
+        const imagePreview = $("#current-image");
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.attr("src", e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.attr("src", "");
+        }
+    });
 });
+
+
