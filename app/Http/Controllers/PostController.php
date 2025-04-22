@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{Post, ActionPost, Category};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -69,10 +70,38 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
         $post = Post::findOrFail($post->id);
-        $post->update($request->all());
-        $post->save();
-        return redirect()->route('post.show', $post->title);
+        // Prepare data for update
+        $data = [
+            'title' => $request->title,
+            'content' => $request->content,
+        ];
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            // if ($post->image) {
+            //     Storage::disk('public')->delete($post->image);
+            // }
+
+            // Store new image
+            $data['image'] = $request->file('image')->store('articles', 'public');
+        }
+
+        // Update the post
+        $post->update($data);
+
+        // Return JSON response
+        return response()->json([
+            'message' => 'Post updated successfully.',
+            'redirect' => route('post.show', $post->title)
+        ]);
     }
     /**
      * Remove the specified resource from storage.
@@ -140,10 +169,9 @@ class PostController extends Controller
         $post->save();
         return response()->json(['message' => 'View incremented successfully.', "post" => $post]);
     }
-    public function postCatygory(Category $category ,Request $request )
+    public function postCatygory(Category $category, Request $request)
     {
-        // $category = Category::where('name', $category->name)->firstOrFail();
-        // dd($category);
+
         $posts = $category->posts()->paginate(9);
         if ($request->ajax()) {
             $postsView = view('post.getPageValue', compact('posts'))->render();

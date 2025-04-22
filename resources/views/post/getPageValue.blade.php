@@ -14,12 +14,12 @@
 
         {{-- Image Section with Gradient Overlay --}}
         <div class="relative h-48 w-full overflow-hidden">
-            <img src="{{ $post->image }}" alt="{{ $post->title }}"
+            <img src="{{ asset( "storage/".$post->image) }}" alt="{{ $post->title }}"
                 class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 loading="lazy"
-                onerror="this.src='https://picsum.photos/400/300?random={{ $post->id }}'">
+                 >
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-            
+
             {{-- Category Badge --}}
             <div class="absolute right-4 top-4">
                 <a href="{{ route('post.catygory', $post->category->name) }}"
@@ -44,12 +44,12 @@
             </p>
 
             {{-- Author Info with Hover Effects --}}
-            <a href="{{ route('users.posts', $post->user) }}" 
+            <a href="{{ route('users.posts', $post->user) }}"
                class="mb-4 flex h-12 items-center rounded-lg p-2 transition-colors duration-300 hover:bg-gray-50 dark:hover:bg-gray-800">
-                <img src="{{ $post->user->image }}" 
+                <img src="{{ $post->user->image }}"
                      alt="{{ $post->user->name }}"
                      class="h-8 w-8 rounded-full object-cover ring-2 ring-transparent transition-all duration-300 group-hover:ring-blue-400"
-                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($post->user->name) }}&color=7F9CF5&background=EBF4FF'">
+                      >
                 <div class="ml-3">
                     <p class="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                         {{ $post->user->name }}
@@ -101,10 +101,10 @@
 
                     {{-- View Counter with Enhanced Style --}}
                     <div class="flex items-center space-x-2 rounded-full px-3 py-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                             class="h-5 w-5 text-gray-500 dark:text-gray-400" 
-                             fill="none" 
-                             viewBox="0 0 24 24" 
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                             fill="none"
+                             viewBox="0 0 24 24"
                              stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

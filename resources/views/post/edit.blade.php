@@ -56,7 +56,9 @@
 
             <!-- Post Form -->
             <form action="{{ route('post.update', $post->id) }}" method="POST" enctype="multipart/form-data"
-                class="space-y-6">
+                class="space-y-6"
+                    id="post-form"
+                >
                 @csrf
                 @method('PUT')
 
@@ -109,7 +111,7 @@
                             <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Image</h3>
                             <div class="relative group rounded-lg overflow-hidden aspect-video">
                                 <div class="absolute inset-0">
-                                    <img src="{{ $post->image }}" loading="lazy" alt="{{ $post->title }}"
+                                    <img src="{{ asset( "storage/".$post->image) }}" loading="lazy" alt="{{ $post->title }}"
                                         id="current-image"
                                         class="w-full h-full object-contain bg-gray-100 dark:bg-gray-800">
                                     <div

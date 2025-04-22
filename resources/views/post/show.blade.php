@@ -28,7 +28,7 @@
             </div>
             @endif
 
-            <img src="https://picsum.photos/1200/800?random={{ $post->id }}"
+            <img src="{{ asset( "storage/".$post->image) }}"
                  alt="{{ $post->title }}"
                  class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
